@@ -27,16 +27,18 @@ GPIO.setup(switch_1, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
 GPIO.setup(switch_2, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
 
 # function definition: threaded callback
-def callback1():
+def callback1(channel):
     print("Switch 1")
-def callback2():
+def callback2(channel):
     print("Switch 2")
+
 
 # Logic that you write
 def main():
+    GPIO.add_event_detect(switch_1, GPIO.RISING, callback = callback1,bouncetime=200)
+    GPIO.add_event_detect(switch_2, GPIO.RISING, callback = callback2,bouncetime=200)
     while(1):
-        GPIO.add_event_detect(switch_1, GPIO.FALLING, callback=callback1,bouncetime=200)
-        GPIO.add_event_detect(switch_2, GPIO.FALLING, callback=callback2,bouncetime=200)
+
         GPIO.output(led1,GPIO.HIGH)
         time.sleep(0.5)
         GPIO.output(led1,GPIO.LOW)
