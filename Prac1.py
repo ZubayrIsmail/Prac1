@@ -12,6 +12,8 @@ Date: 28/07/2019
 # import Relevant Librares
 import RPi.GPIO as GPIO
 import time
+import itertools
+
 GPIO.setmode(GPIO.BOARD)
 switch_1 = 36
 switch_2 = 38
@@ -26,19 +28,40 @@ GPIO.setup(led3, GPIO.OUT)
 GPIO.setup(switch_1, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
 GPIO.setup(switch_2, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
 
-global onoff
-onoff = 0
+GPIO.output(led1, GPIO.LOW)
+GPIO.output(led2, GPIO.LOW)
+GPIO.output(led3, GPIO.LOW)
+
+global count
+count = 1
+lst = list(itertools.product([0, 1], repeat=3))
 # function definition: threaded callback
 def callback1(channel):
-    global onoff
-    if  onoff == 0:
-        GPIO.output(led1, GPIO.HIGH)
-        onoff = 1
-    else:
-        GPIO.output(led1, GPIO.LOW)
-        onoff = 0
+    global count
+    print(lst[1][2])
+    print(lst)
+    
+    GPIO.output(led1,lst[count][0])
+    GPIO.output(led2,lst[count][1])
+    GPIO.output(led3,lst[count][2])
+    
+    count += 1
+    
+    if count == 8:
+        count = 0
+    
 def callback2(channel):
-    print("Switch 2")
+    global count
+
+    GPIO.output(led1,lst[count][0])
+    GPIO.output(led2,lst[count][1])
+    GPIO.output(led3,lst[count][2])
+    
+    count -= 1
+    
+    if count == -1:
+        count = 7
+    
 
 
 # Logic that you write
