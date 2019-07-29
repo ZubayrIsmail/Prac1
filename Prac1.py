@@ -16,7 +16,7 @@ import itertools
 
 GPIO.setmode(GPIO.BOARD)
 switch_1 = 36
-switch_2 = 38
+switch_2 = 40
 led1 = 11
 led2 = 13
 led3 = 15
@@ -33,45 +33,62 @@ GPIO.output(led2, GPIO.LOW)
 GPIO.output(led3, GPIO.LOW)
 
 global count
-count = 1
+count = 0
 lst = list(itertools.product([0, 1], repeat=3))
 # function definition: threaded callback
-def callback1(channel):
+def countUp(up):
     global count
-    print(lst[1][2])
-    print(lst)
-    
-    GPIO.output(led1,lst[count][0])
-    GPIO.output(led2,lst[count][1])
-    GPIO.output(led3,lst[count][2])
-    
-    count += 1
-    
-    if count == 8:
+    count += 1  
+    print(count)
+    #print(lst[1][2])
+    #print(lst)
+    print("up pushed")
+    if count > 7:
         count = 0
+        
     
-def callback2(channel):
-    global count
+    GPIO.output(led1,lst[count][0])
+    GPIO.output(led2,lst[count][1])
+    GPIO.output(led3,lst[count][2])
+    #GPIO.remove_event_detect(switch_1)
+    time.sleep(0.3)
+    
 
+    
+def countDown(down):
+    global count
+    count -= 1
+    print("Down pushed")
+    print(count)
+    if count < 0:
+        count = 7
+       
+    
     GPIO.output(led1,lst[count][0])
     GPIO.output(led2,lst[count][1])
     GPIO.output(led3,lst[count][2])
     
-    count -= 1
+    time.sleep(0.3)
     
-    if count == -1:
-        count = 7
+
+    
+
     
 
 
 # Logic that you write
 def main():
-    GPIO.add_event_detect(switch_1, GPIO.RISING, callback = callback1,bouncetime=200)
-    GPIO.add_event_detect(switch_2, GPIO.RISING, callback = callback2,bouncetime=200)
+    GPIO.add_event_detect(switch_1, GPIO.RISING, callback = countUp,bouncetime=500)
+    GPIO.add_event_detect(switch_2, GPIO.RISING, callback = countDown,bouncetime=500)
+    
+    #GPIO.remove_event_detect(switch_2)
     while(1):
         x=1
+    
 
-
+    
+    
+        
     print("write your logic here")
 # Under a falling-edge detection, regardless of current execution
 # callback function will be called
